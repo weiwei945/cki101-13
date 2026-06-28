@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    container_name: flask_web_app
+    ports:
+      - "80:5000"
+    restart: unless-stopped
