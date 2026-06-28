@@ -18,3 +18,4 @@ coverage.xml
 .git
 .gitignore
 history/
+db_data/

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>用戶管理系統</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    /* ── 頂部 Header ── */
+    header {
+      background: linear-gradient(135deg, #1a1d2e 0%, #16213e 100%);
+      border-bottom: 1px solid rgba(99,102,241,0.25);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    header .logo {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    header h1 { font-size: 1.2rem; font-weight: 600; color: #f1f5f9; }
+    header span { font-size: 0.75rem; color: #94a3b8; margin-left: auto; }
+
+    /* ── 主區域 ── */
+    main {
+      max-width: 900px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    /* ── 卡片 ── */
+    .card {
+      background: linear-gradient(145deg, #1e2235, #181c2e);
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #a5b4fc;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px; height: 16px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      border-radius: 4px;
+    }
+
+    /* ── 表單 ── */
+    .form-group { margin-bottom: 1.1rem; }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #94a3b8;
+      margin-bottom: 0.45rem;
+      letter-spacing: 0.04em;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      background: #0f1117;
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 10px;
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+    input::placeholder { color: #475569; }
+
+    /* flash 訊息 */
+    .flash {
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .flash.success {
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #86efac;
+    }
+    .flash.error {
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5;
+    }
+
+    /* 按鈕 */
+    .btn {
+      width: 100%;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(99,102,241,0.35);
+    }
+    .btn-primary:hover { opacity: 0.9; }
+
+    /* ── 表格 ── */
+    .table-wrapper { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    thead th {
+      padding: 0.75rem 1rem;
+      background: rgba(99,102,241,0.1);
+      color: #a5b4fc;
+      font-weight: 600;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-align: left;
+      border-bottom: 1px solid rgba(99,102,241,0.2);
+    }
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(99,102,241,0.06); }
+    td {
+      padding: 0.85rem 1rem;
+      color: #cbd5e1;
+      vertical-align: middle;
+    }
+    td .badge {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      background: rgba(99,102,241,0.15);
+      color: #a5b4fc;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+
+    /* 刪除按鈕 */
+    .btn-delete {
+      padding: 0.35rem 0.85rem;
+      border: 1px solid rgba(239,68,68,0.4);
+      background: rgba(239,68,68,0.08);
+      color: #f87171;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    }
+    .btn-delete:hover {
+      background: rgba(239,68,68,0.18);
+      border-color: rgba(239,68,68,0.7);
+    }
+    .btn-delete:active { transform: scale(0.97); }
+
+    /* 空狀態 */
+    .empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #475569;
+    }
+    .empty .emoji { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .empty p { font-size: 0.9rem; }
+
+    /* 統計 badge */
+    .stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(99,102,241,0.12);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 20px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.78rem;
+      color: #a5b4fc;
+      margin-bottom: 1.2rem;
+    }
+
+    @media (max-width: 680px) {
+      main { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">👥</div>
+  <h1>用戶管理系統</h1>
+  <span>CKI101</span>
+</header>
+
+<main>
+  <!-- 左側：新增表單 -->
+  <div class="card">
+    <p class="card-title">新增用戶</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">
+          {% if category == 'success' %}✅{% else %}❌{% endif %}
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST" action="/user">
+      <div class="form-group">
+        <label for="name">姓名</label>
+        <input type="text" id="name" name="name" placeholder="請輸入姓名" required />
+      </div>
+      <div class="form-group">
+        <label for="age">年紀</label>
+        <input type="number" id="age" name="age" placeholder="請輸入年齡" min="0" max="150" required />
+      </div>
+      <button type="submit" class="btn btn-primary">＋ 新增用戶</button>
+    </form>
+  </div>
+
+  <!-- 右側：用戶列表 -->
+  <div class="card">
+    <p class="card-title">用戶列表</p>
+    <div class="stat">共 {{ users | length }} 位用戶</div>
+
+    {% if users %}
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>姓名</th>
+            <th>年紀</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td><span class="badge"># {{ user.id }}</span></td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.age }} 歲</td>
+            <td>
+              <form method="POST" action="/user/{{ user.id }}/delete"
+                    onsubmit="return confirm('確定刪除「{{ user.name }}」？')">
+                <button type="submit" class="btn-delete">刪除</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty">
+      <div class="emoji">🗂️</div>
+      <p>目前尚無用戶，請從左側新增。</p>
+    </div>
+    {% endif %}
+  </div>
+</main>
+
+</body>
+</html>
